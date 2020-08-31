@@ -5,9 +5,8 @@ const Button = ({handleClick, text}) => (
   <button onClick={handleClick}>{text}</button>
 )
 
-//<tr> = table row, <td> = table data
 const StatisticsLine = ({text, value}) => (
-  <tr><td>{text}</td><td>{value}</td></tr> 
+  <tr><td>{text}</td><td>{value}</td></tr>  //<tr>=table row, <td>=table data
 )
 
 const Statistics = ({good, bad, neutral}) => {
