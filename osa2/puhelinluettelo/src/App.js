@@ -53,7 +53,7 @@ const App = () => {
       <h3>Numbers</h3>
       <Persons persons={filterPersons} />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

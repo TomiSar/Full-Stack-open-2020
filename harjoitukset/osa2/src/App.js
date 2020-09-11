@@ -45,7 +45,7 @@ const App = () => {
       <h1>Notes</h1>
       <div>
         <button onClick={() => setShowAll(!showAll)}> 
-        show : {showAll ? 'important' : 'all' }
+        <i> show : </i> <strong>  {showAll ? 'important' : 'all' } </strong> 
         </button>
       </div>
       <ul>
