@@ -1,37 +1,85 @@
 import React, { useState, useEffect } from "react"
-import axios from 'axios'
 import Note from "./components/Note"
+import noteService from './services/notes'
 
 //käynnistetään json-server PORT=3001 --> npx json-server --port=3001 --watch db.json
+//Kesken luku 2 d) Kehittyneempi tapa olioliteraalien määrittelyyn !!!
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('') //text On label field
   const [showAll, setShowAll] = useState(true)
 
+  //#region Kommentoidaan pois GET-pyyntö palvelin ei palauta viestejä 
   useEffect(() => {
-    console.log('effect')
-    axios.get('http://localhost:3001/notes').then(response => {
-      console.log('promise fulfilled')
-      setNotes(response.data)
-    })
+    noteService
+      .getAll()
+      .then(initialNotes => {
+        setNotes(initialNotes)
+      })
   }, [])
-  //console.log('render', notes, notes)
+
+    //Komponentti App määrittelee tapahtumankäsittelijästä toggleImportanceOf ja välittää sen jokaiselle Note-komponentille:
+    //Taulukon metodilla find etsitään muutettava muistiinpano ja talletetaan muuttujaan note viite siihen.
+    //Sen jälkeen luodaan uusi olio, jonka sisältö on sama kuin vanhan olion sisältö poislukien kenttä important.
+    //Niin sanottua object spread -syntaksia hyödyntävä uuden olion luominen näyttää hieman erikoiselta:
+    //Yksittäistä json-serverillä olevaa muistiinpanoa voi muuttaa kahdella tavalla, joko korvaamalla sen 
+    //tekemällä HTTP PUT -pyyntö muistiinpanon yksilöivään osoitteeseen tai muuttamalla ainoastaan joidenkin 
+    //muistiinpanon kenttien arvoja HTTP PATCH -pyynnöllä.  console.log(`importance of ${id} needs to be toggled`)
+    const toggleImportanceOf = id => {
+      const note = notes.find(n => n.id === id)
+      const changedNote = { ...note, important: !note.important }
+  
+      noteService
+        .update(id, changedNote)
+        .then(returnedNote => {
+          setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+        })
+        .catch(error => {
+          alert(
+            `the note '${note.content}' was already deleted from server`
+          )
+          setNotes(notes.filter(n => n.id !== id))
+        })
+    }
 
   //Add note
+  // const addNote = (event) => {
+  //   event.preventDefault()
+  //   const noteObject = {
+  //     content: newNote,
+  //     date: new Date().toISOString(),
+  //     important: Math.random() > 0.5,
+  //     id: notes.length + 1,
+  //   }
+  //   //Uusi muistiinpano lisätään vanhojen joukkoon taulukon metodia concat
+  //   //Tapahtumankäsittelijä tyhjentää myös syötekenttää kontrolloivan tilan newNote sen funktiolla setNewNote
+  //   setNotes(notes.concat(noteObject))
+  //   setNewNote('')
+  // }
+  //#endregion
+
+  //Muutetaan nyt uuden muistiinpanon lisäämisestä huolehtivaa tapahtumankäsittelijää seuraavasti:
+  //POST komennolla lisätään uusi noteObject json-serverilla. Muistiinpanoa vastaava olio, ei kuitenkaan lisätä 
+  //sille kenttää id, sillä on parempi jättää id:n generointi palvelimen vastuulle!
+  //Koska POST-pyynnössä lähettämämme data oli Javascript-olio, osasi axios automaattisesti 
+  //asettaa pyynnön Content-type headerille oikean arvon eli application/json.
   const addNote = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const noteObject = {
       content: newNote,
       date: new Date().toISOString(),
       important: Math.random() > 0.5,
-      id: notes.length + 1,
     }
-    //Uusi muistiinpano lisätään vanhojen joukkoon taulukon metodia concat
-    //Tapahtumankäsittelijä tyhjentää myös syötekenttää kontrolloivan tilan newNote sen funktiolla setNewNote
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
+
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote('')
+      })
   }
 
+  
   const handleNoteChange = (event) => {
     console.log(event.target.value)
     setNewNote(event.target.value)
@@ -45,13 +93,15 @@ const App = () => {
       <h1>Notes</h1>
       <div>
         <button onClick={() => setShowAll(!showAll)}> 
-        <i> show : </i> <strong>  {showAll ? 'important' : 'all' } </strong> 
+          {showAll ? 'important' : 'all' }
         </button>
       </div>
       <ul>
-        {notesToShow.map(note => (
-          <Note key={note.id} note={note} />
-        ))}
+        {notesToShow.map(note => 
+          <Note key={note.id} note={note}
+          toggleImportance={() => toggleImportanceOf(note.id)}
+          />
+        )}
       </ul>
       <form onSubmit={addNote}>
         <input value={newNote} onChange={handleNoteChange} />
