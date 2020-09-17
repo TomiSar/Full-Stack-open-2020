@@ -1,13 +1,8 @@
 {
   "persons": [
     {
-      "name": "Tauski",
-      "number": "050-1234",
-      "id": 1
-    },
-    {
       "name": "Timo Jutila",
-      "number": "00-101",
+      "number": "00-222",
       "id": 2
     },
     {
@@ -16,19 +11,14 @@
       "id": 3
     },
     {
-      "name": "Cock Norris",
-      "number": "050-6666969",
-      "id": 4
-    },
-    {
       "name": "Arto Hellas",
       "number": "09-123456",
       "id": 5
     },
     {
-      "name": "Mari Rastila",
-      "number": "067-4560912",
-      "id": 6
+      "name": "Cock Norris",
+      "number": "0700-666666",
+      "id": 7
     }
   ]
 }

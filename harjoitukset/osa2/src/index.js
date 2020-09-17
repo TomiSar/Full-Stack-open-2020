@@ -1,7 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import './index.css'
 import App from './App'
-//import axios from 'axios'
+
+ReactDOM.render( <App />, document.getElementById('root'))
 
 //#region  2.a Kokoelmien renderöinti ja moduulit, 2.c Palvelimella olevan datan hakeminen
 //Frontend npm start (http://localhost:3000) and Backend Start json-server --> npm run server (http://localhost:3001/notes)
@@ -45,5 +47,3 @@ import App from './App'
 //ReactDOM.render(<App notes={notes} />, document.getElementById('root'));
 
 //#endregion
-
-ReactDOM.render(<App />, document.getElementById('root'))

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Note from "./components/Note"
 import noteService from './services/notes'
+import Notification from './components/Notification'
 
 //käynnistetään json-server PORT=3001 --> npx json-server --port=3001 --watch db.json
 //Kesken luku 2 d) Kehittyneempi tapa olioliteraalien määrittelyyn !!!
@@ -8,8 +9,8 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('') //text On label field
   const [showAll, setShowAll] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('Some error occured')
 
-  //#region Kommentoidaan pois GET-pyyntö palvelin ei palauta viestejä 
   useEffect(() => {
     noteService
       .getAll()
@@ -30,18 +31,21 @@ const App = () => {
       const changedNote = { ...note, important: !note.important }
   
       noteService
-        .update(id, changedNote)
-        .then(returnedNote => {
-          setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-        })
-        .catch(error => {
-          alert(
-            `the note '${note.content}' was already deleted from server`
-          )
-          setNotes(notes.filter(n => n.id !== id))
-        })
-    }
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+      })
+      .catch(error => {
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)   
+      })
+  }
 
+  //#region Kommentoidaan pois GET-pyyntö palvelin ei palauta viestejä 
   //Add note
   // const addNote = (event) => {
   //   event.preventDefault()
@@ -78,7 +82,6 @@ const App = () => {
         setNewNote('')
       })
   }
-
   
   const handleNoteChange = (event) => {
     console.log(event.target.value)
@@ -91,6 +94,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}> 
           {showAll ? 'important' : 'all' }

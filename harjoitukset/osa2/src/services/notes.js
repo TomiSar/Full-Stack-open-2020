@@ -1,12 +1,13 @@
 //Palvelimen kanssa tapahtuvan kommunikoinnin eristäminen omaan moduuliin
 //Single responsibility -periaatteen hengessä kommunikointi onkin viisainta eristää omaan moduuliinsa.
-import axios from 'axios'
-const baseUrl = 'htttp://localhost/3001/notes'
-
 //Promise ja virheet
 //Simuloidaan tälläistä tilannetta "kovakoodaamalla" noteServiceen funktioon getAll muistiinpano, 
 //jota ei ole todellisuudessa (eli palvelimella) olemassa:
 //Hae kaikki
+import axios from 'axios'
+const baseUrl = 'htttp://localhost/3001/notes'
+
+//Search all
 const getAll = () => {
     const request = axios.get(baseUrl)
     const nonExisting = {
