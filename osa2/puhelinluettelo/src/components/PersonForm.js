@@ -3,17 +3,19 @@ import React from 'react'
 //Lisätään täällä uusi henkilölle nimi ja numero puhelinmuistioon. 
 const PersonForm = (props) => {
     return (
-        <form onSubmit={props.addPerson}>
+    <form onSubmit={props.addPerson}>
         <div>
-            name: <input onChange={event => props.setNewName(event.target.value)} value={props.newName} />
+            name:
+            <input value={props.newName} onChange={props.handleNameChange}/> 
         </div>
         <div>
-            number: <input onChange={event => props.setNewNumber(event.target.value)} value={props.newNumber} />
+            number:
+            <input value={props.newNumber} onChange={props.handleNumberChange}/>
         </div>
         <div>
-        <button type="submit">add</button> 
+            <button type="submit">add</button> 
         </div>
-        </form>
+    </form>
     )
 }
 

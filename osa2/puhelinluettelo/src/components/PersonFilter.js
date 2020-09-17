@@ -1,11 +1,9 @@
 import React from 'react'
 
-const PersonFilter = (props) => {
+const PersonFilter = ({filter, onFilterChange}) => {
     return (
-        <div>
-            filter shown with <input onChange={event => props.setFilter(event.target.value)} value={props.filter} /> 
-        </div>
+      <p>filter shown with <input value={filter} onChange={onFilterChange}/></p>
     )
-}
+  }
 
 export default PersonFilter
